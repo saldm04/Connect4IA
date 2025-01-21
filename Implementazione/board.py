@@ -10,6 +10,7 @@ AI_TURN = 1
 PLAYER_PIECE = 1
 AI_PIECE = 2
 
+
 def create_board():
     """
     Crea una matrice 6x7 (row x col) inizializzata a 0.
@@ -17,11 +18,13 @@ def create_board():
     board = np.zeros((ROWS, COLS))
     return board
 
+
 def drop_piece(board, row, col, piece):
     """
     Inserisce la pedina nella posizione [row, col].
     """
     board[row][col] = piece
+
 
 def is_valid_location(board, col):
     """
@@ -29,49 +32,52 @@ def is_valid_location(board, col):
     """
     return board[0][col] == 0
 
+
 def get_next_open_row(board, col):
     """
     Restituisce l'indice della prima riga libera (dall'alto verso il basso)
     nella colonna.
     """
-    for r in range(ROWS-1, -1, -1):
+    for r in range(ROWS - 1, -1, -1):
         if board[r][col] == 0:
             return r
+
 
 def winning_move(board, piece):
     """
     Verifica se il giocatore ha fatto '4 in fila'.
     Ritorna True se esiste una combinazione vincente.
     """
-    # orizzontali
+    # Controllo orizzontale
     for c in range(COLS - 3):
         for r in range(ROWS):
-            if (board[r][c] == piece and board[r][c+1] == piece and
-                board[r][c+2] == piece and board[r][c+3] == piece):
+            if (board[r][c] == piece and board[r][c + 1] == piece and
+                    board[r][c + 2] == piece and board[r][c + 3] == piece):
                 return True
 
-    # verticali
+    # Controllo verticale
     for c in range(COLS):
         for r in range(ROWS - 3):
-            if (board[r][c] == piece and board[r+1][c] == piece and
-                board[r+2][c] == piece and board[r+3][c] == piece):
+            if (board[r][c] == piece and board[r + 1][c] == piece and
+                    board[r + 2][c] == piece and board[r + 3][c] == piece):
                 return True
 
-    # diagonali positive
+    # Controllo diagonale positiva
     for c in range(COLS - 3):
         for r in range(3, ROWS):
-            if (board[r][c] == piece and board[r-1][c+1] == piece and
-                board[r-2][c+2] == piece and board[r-3][c+3] == piece):
+            if (board[r][c] == piece and board[r - 1][c + 1] == piece and
+                    board[r - 2][c + 2] == piece and board[r - 3][c + 3] == piece):
                 return True
 
-    # diagonali negative
+    # Controllo diagonale negativa
     for c in range(3, COLS):
         for r in range(3, ROWS):
-            if (board[r][c] == piece and board[r-1][c-1] == piece and
-                board[r-2][c-2] == piece and board[r-3][c-3] == piece):
+            if (board[r][c] == piece and board[r - 1][c - 1] == piece and
+                    board[r - 2][c - 2] == piece and board[r - 3][c - 3] == piece):
                 return True
 
     return False
+
 
 def get_valid_locations(board):
     """
@@ -82,6 +88,7 @@ def get_valid_locations(board):
         if is_valid_location(board, col):
             valid_locations.append(col)
     return valid_locations
+
 
 def is_terminal_node(board):
     """

@@ -3,7 +3,7 @@ import math
 import random
 import pygame
 from threading import Timer
-from algorithms.minimax import find_best_move
+from algorithms.minimax_alpha_beta import find_best_move
 
 # Import delle funzioni e costanti di base
 from board import (
