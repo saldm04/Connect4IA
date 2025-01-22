@@ -39,7 +39,7 @@ def minimax_alpha_beta(board, maximizing_player, alpha, beta):
     Restituisce:
       Il valore minimax per lo stato corrente.
     """
-    # Caso terminale: vittoria o pareggio
+    # Controllo dei casi terminali
     if winning_move(board, PLAYER_PIECE):
         return -1
     if winning_move(board, AI_PIECE):
@@ -79,7 +79,6 @@ def find_best_move(board):
     """
     Restituisce la colonna migliore per l'IA (AI_PIECE) valutando l'intero game tree
     con l'algoritmo Minimax potenziato con potatura alpha-beta.
-
     In caso di più mosse equivalenti, ne sceglie una con il punteggio massimo.
     """
     best_value = float('-inf')

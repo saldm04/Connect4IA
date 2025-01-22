@@ -1,9 +1,10 @@
 import sys
 import math
 import random
+import time
 import pygame
 from threading import Timer
-from algorithms.minimax_alpha_beta import find_best_move
+from algorithms.minimax_ab_improved import find_best_move
 
 # Import delle funzioni e costanti di base
 from board import (
@@ -107,7 +108,10 @@ def main():
         if turn == AI_TURN and not game_over and not_over:
             pygame.time.wait(500)  # Breve attesa per rendere visibile l'azione
 
-            col = find_best_move(board)
+            start_time = time.time()
+            col = find_best_move(board, 5)
+            end_time = time.time()
+            print(f"Tempo di calcolo: {end_time - start_time} secondi")
 
             if col is not None and is_valid_location(board, col):
                 row = get_next_open_row(board, col)
@@ -118,7 +122,7 @@ def main():
                     label = my_font.render("AI WINS!", 1, YELLOW)
                     screen.blit(label, (40, 10))
                     not_over = False
-                    t = Timer(3.0, end_game)
+                    t = Timer(5.0, end_game)
                     t.start()
 
                 draw_board(screen, board, SQUARESIZE, circle_radius, ROWS, COLS)
