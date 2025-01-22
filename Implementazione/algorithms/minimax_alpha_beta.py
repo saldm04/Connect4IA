@@ -41,9 +41,9 @@ def minimax_alpha_beta(board, maximizing_player, alpha, beta):
     """
     # Controllo dei casi terminali
     if winning_move(board, PLAYER_PIECE):
-        return -1
+        return -10000
     if winning_move(board, AI_PIECE):
-        return +1
+        return +10000
     if is_draw(board):
         return 0
 

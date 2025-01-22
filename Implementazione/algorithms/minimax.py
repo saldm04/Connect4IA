@@ -37,9 +37,9 @@ def pure_minimax(board, maximizing_player):
 
     # Se la partita è finita, valutiamo l'esito
     if winning_move(board, PLAYER_PIECE):
-        return -1  # Vantaggio per il giocatore umano
+        return -10000
     if winning_move(board, AI_PIECE):
-        return +1  # Vantaggio per l'IA
+        return +10000
     if is_draw(board):
         return 0
 

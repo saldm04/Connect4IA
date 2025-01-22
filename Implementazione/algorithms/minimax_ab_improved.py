@@ -36,37 +36,16 @@ def clone_board(board):
 
 
 def minimax_alpha_beta(board, maximizing_player, alpha, beta, depth, max_depth):
-    """
-    Algoritmo minimax con potatura alpha-beta e limite di profondità.
-
-    Parametri:
-      - board: stato corrente della board.
-      - maximizing_player: True se il turno appartiene all'IA, False al giocatore.
-      - alpha: miglior punteggio garantito fino ad ora lungo il cammino dei nodi massimizzanti.
-      - beta: miglior punteggio garantito lungo il cammino dei nodi minimizzanti.
-      - depth: profondità corrente nella ricorsione.
-      - max_depth: profondità massima da esplorare.
-
-    Restituisce:
-      Un valore intero che:
-        * Valuta lo stato come +1 se vincente per l'IA,
-        * -1 se vincente per il giocatore,
-        * 0 in caso di pareggio,
-        * oppure un punteggio basato sulla funzione euristica se si è raggiunta la profondità massima.
-    """
-
     # Controllo dei casi terminali
     if winning_move(board, PLAYER_PIECE):
-        return -1
+        return -10000
     if winning_move(board, AI_PIECE):
-        return +1
+        return +10000
     if is_draw(board):
         return 0
 
-    # Se abbiamo raggiunto il limite massimo di profondità,
-    # valutiamo lo stato tramite la funzione euristica.
     if depth == max_depth:
-        return score_position(board, AI_PIECE)
+        return score_position(board, AI_PIECE)  # Sempre dal punto di vista dell’IA
 
     valid_locations = get_valid_locations(board)
 
@@ -80,7 +59,7 @@ def minimax_alpha_beta(board, maximizing_player, alpha, beta, depth, max_depth):
             best_value = max(best_value, value)
             alpha = max(alpha, best_value)
             if alpha >= beta:
-                break  # beta cut-off
+                break
         return best_value
     else:
         best_value = float('inf')
@@ -92,8 +71,9 @@ def minimax_alpha_beta(board, maximizing_player, alpha, beta, depth, max_depth):
             best_value = min(best_value, value)
             beta = min(beta, best_value)
             if alpha >= beta:
-                break  # alpha cut-off
+                break
         return best_value
+
 
 
 def find_best_move(board, max_depth):
@@ -111,8 +91,6 @@ def find_best_move(board, max_depth):
         row = get_next_open_row(new_board, col)
         drop_piece(new_board, row, col, AI_PIECE)
         move_value = minimax_alpha_beta(new_board, False, float('-inf'), float('inf'), 1, max_depth)
-        # Debug: stampa il punteggio per ogni colonna
-        # print(f"Colonna {col}, punteggio: {move_value}")
         if move_value > best_value:
             best_value = move_value
             best_col = col

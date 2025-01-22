@@ -4,7 +4,7 @@ import random
 import time
 import pygame
 from threading import Timer
-from algorithms.minimax_ab_improved import find_best_move
+from algorithms.minimax_ab_all_improvements import find_best_move
 
 # Import delle funzioni e costanti di base
 from board import (
@@ -109,7 +109,7 @@ def main():
             pygame.time.wait(500)  # Breve attesa per rendere visibile l'azione
 
             start_time = time.time()
-            col = find_best_move(board, 5)
+            col = find_best_move(board, 10, 7)
             end_time = time.time()
             print(f"Tempo di calcolo: {end_time - start_time} secondi")
 
