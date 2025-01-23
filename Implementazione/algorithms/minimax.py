@@ -5,7 +5,6 @@ che esplora l'intero game tree. Viene restituito:
   - +1 se lo stato è vincente per l'IA (AI_PIECE),
   - 0 se lo stato rappresenta un pareggio.
 """
-
 from board import (
     PLAYER_PIECE,
     AI_PIECE,

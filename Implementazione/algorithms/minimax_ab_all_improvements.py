@@ -2,8 +2,6 @@
 Implementazione di Minimax con potatura alpha-beta, approfondimento iterativo,
 ordinamento dinamico delle mosse e potatura in avanti (beam search).
 """
-
-import numpy as np
 from board import (
     PLAYER_PIECE,
     AI_PIECE,
@@ -47,14 +45,9 @@ def order_moves(board, moves, piece):
         drop_piece(new_board, row, col, piece)
         score = score_position(new_board, piece)
         scored_moves.append((score, col))
-    # Se stiamo ordinando per l'IA, vogliamo quelli con score maggiore prima;
-    # se per il giocatore, quelli con score minore (visto che per il giocatore il punteggio è "inverso").
-
-
     scored_moves.sort(key=lambda x: x[0], reverse=True)
     # Restituisce solo la lista delle colonne ordinate
     ordered_moves = [col for (_, col) in scored_moves]
-
     return ordered_moves
 
 
@@ -119,7 +112,7 @@ def iterative_deepening_minimax(board, max_depth, beam_width):
     """
     best_move = None
     start_time = time.time()  # Tempo iniziale
-    time_limit = 600  # Limite di tempo in secondi
+    time_limit = 1  # Limite di tempo in secondi
 
     for current_depth in range(1, max_depth + 1):
         best_value = float('-inf')

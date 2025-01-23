@@ -6,8 +6,6 @@ L'algoritmo esplora l'intero game tree e restituisce:
   - +1 se lo stato è vincente per l'IA (AI_PIECE),
   - 0 se lo stato rappresenta un pareggio.
 """
-
-import numpy as np
 from board import (
     PLAYER_PIECE,
     AI_PIECE,
