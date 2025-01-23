@@ -54,9 +54,7 @@ def order_moves(board, moves, piece):
     scored_moves.sort(key=lambda x: x[0], reverse=True)
     # Restituisce solo la lista delle colonne ordinate
     ordered_moves = [col for (_, col) in scored_moves]
-    print("AI") if piece == AI_PIECE else print("user")
-    print(scored_moves)
-    print(ordered_moves)
+
     return ordered_moves
 
 

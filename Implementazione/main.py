@@ -109,7 +109,7 @@ def main():
             pygame.time.wait(500)  # Breve attesa per rendere visibile l'azione
 
             start_time = time.time()
-            col = find_best_move(board, 10, 7)
+            col = find_best_move(board, 4, 7)
             end_time = time.time()
             print(f"Tempo di calcolo: {end_time - start_time} secondi")
 
