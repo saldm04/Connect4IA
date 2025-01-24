@@ -29,10 +29,13 @@ class GameState:
         self.not_over = True
         self.player_name = player_name
         self.difficulty = difficulty
+        if difficulty == 1:
+            self.ai_manager = DecreaseParameters(difficulty)
         self.user_wins = 0
         self.ai_wins = 0
         self.game_gui = GameGui(self.window, player_name, self)
         self.xpos = 0
+        self.test_easy = 0
 
     def handle_events(self):
         for event in pygame.event.get():
@@ -78,12 +81,19 @@ class GameState:
         if self.turn == AI_TURN and not self.game_over and self.not_over:
             pygame.time.wait(400)
 
-            difficulty_params = difficulty_levels.DIFFICULTY_LEVELS[self.difficulty]
+            if self.difficulty == 1:
+                self.ai_manager.update_parameters()
+                difficulty_params = self.ai_manager.difficulty_params
+            else:
+                difficulty_params = difficulty_levels.DIFFICULTY_LEVELS[self.difficulty]
+
             max_depth = difficulty_params['max_depth']
             beam_width = difficulty_params['beam_width']
             heuristic_weights = difficulty_params['heuristic_weights']
             time_limit = difficulty_params['time_limit']
             center_score_map = difficulty_params['center_score_map']
+
+            # Calcola la mossa migliore
             start_time = time.time()
             col = find_best_move(self.board, max_depth, beam_width, heuristic_weights, time_limit, center_score_map)
             end_time = time.time()
@@ -118,6 +128,7 @@ class GameState:
         self.game_over = False
         self.not_over = True
         self.xpos = 0
+        self.test_easy = 0
         pygame.display.update()
 
 class GameGui:
@@ -288,3 +299,63 @@ class GameGui:
             winner = "Utente" if self.game_state.turn == PLAYER_TURN else "AI"
             self.draw_overlay(winner)
         pygame.display.update()
+
+class DecreaseParameters:
+    def __init__(self, difficulty):
+        self.difficulty = difficulty
+        self.moves_made = 0
+        self.DIFFICULTY_LEVELS = {
+            1: {
+                'max_depth': 5,
+                'beam_width': 4,
+                'heuristic_weights': {
+                    'win': 10000,
+                    'three_in_a_row': 100,
+                    'two_in_a_row': 50,
+                    'block_opponent_win': 100,
+                    'block_opponent_three': 45
+                },
+                'time_limit': 1.0,
+                'center_score_map': [3, 4, 5, 5, 5, 4, 3]
+            }
+        }
+        self.difficulty_params = self.DIFFICULTY_LEVELS[self.difficulty]
+
+    def update_parameters(self):
+        self.moves_made += 1
+        if self.moves_made <= 4:
+            self.difficulty_params['max_depth'] = 5
+            self.difficulty_params['beam_width'] = 4
+        elif self.moves_made == 5:
+            self.difficulty_params['max_depth'] = 4
+            self.difficulty_params['beam_width'] = 2
+        elif self.moves_made == 6:
+            self.difficulty_params['max_depth'] = 3
+            self.difficulty_params['beam_width'] = 4
+            self.difficulty_params['heuristic_weights'] = {
+                'win': 100,
+                'three_in_a_row': 25,
+                'two_in_a_row': 10,
+                'block_opponent_win': 10,
+                'block_opponent_three': 0
+            }
+        elif self.moves_made == 7:
+            self.difficulty_params['max_depth'] = 3
+            self.difficulty_params['beam_width'] = 2
+            self.difficulty_params['heuristic_weights'] = {
+                'win': 100,
+                'three_in_a_row': 25,
+                'two_in_a_row': 10,
+                'block_opponent_win': 5,
+                'block_opponent_three': 0
+            }
+        elif self.moves_made >= 8:
+            self.difficulty_params['max_depth'] = 2
+            self.difficulty_params['beam_width'] = 2
+            self.difficulty_params['heuristic_weights'] = {
+                'win': 100,
+                'three_in_a_row': 25,
+                'two_in_a_row': 10,
+                'block_opponent_win': 0,
+                'block_opponent_three': 0
+            }

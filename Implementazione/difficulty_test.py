@@ -10,6 +10,67 @@ from board import (
 )
 from difficulty_levels import DIFFICULTY_LEVELS
 
+class DecreaseParameters:
+    def __init__(self, difficulty):
+        self.difficulty = difficulty
+        self.moves_made = 0
+        self.DIFFICULTY_LEVELS = {
+            1: {
+                'max_depth': 5,
+                'beam_width': 4,
+                'heuristic_weights': {
+                    'win': 10000,
+                    'three_in_a_row': 100,
+                    'two_in_a_row': 50,
+                    'block_opponent_win': 100,
+                    'block_opponent_three': 45
+                },
+                'time_limit': 1.0,
+                'center_score_map': [3, 4, 5, 5, 5, 4, 3]
+            }
+        }
+        self.difficulty_params = self.DIFFICULTY_LEVELS[self.difficulty]
+
+    def update_parameters(self):
+        self.moves_made += 1
+        if self.moves_made <= 4:
+            self.difficulty_params['max_depth'] = 5
+            self.difficulty_params['beam_width'] = 4
+        elif self.moves_made == 5:
+            self.difficulty_params['max_depth'] = 4
+            self.difficulty_params['beam_width'] = 2
+        elif self.moves_made == 6:
+            self.difficulty_params['max_depth'] = 3
+            self.difficulty_params['beam_width'] = 4
+            self.difficulty_params['heuristic_weights'] = {
+                'win': 100,
+                'three_in_a_row': 25,
+                'two_in_a_row': 10,
+                'block_opponent_win': 10,
+                'block_opponent_three': 0
+            }
+        elif self.moves_made == 7:
+            self.difficulty_params['max_depth'] = 3
+            self.difficulty_params['beam_width'] = 2
+            self.difficulty_params['heuristic_weights'] = {
+                'win': 100,
+                'three_in_a_row': 25,
+                'two_in_a_row': 10,
+                'block_opponent_win': 5,
+                'block_opponent_three': 0
+            }
+        elif self.moves_made >= 8:
+            self.difficulty_params['max_depth'] = 2
+            self.difficulty_params['beam_width'] = 2
+            self.difficulty_params['heuristic_weights'] = {
+                'win': 100,
+                'three_in_a_row': 25,
+                'two_in_a_row': 10,
+                'block_opponent_win': 0,
+                'block_opponent_three': 0
+            }
+
+        return self.difficulty_params
 
 def print_board(board):
     """Stampa la scacchiera nel terminale."""
@@ -54,7 +115,9 @@ def play_game(ai1_level, ai2_level, verbose=False):
     # Flag per determinare se è la prima mossa
     first_move = True
 
-    # Ottieni parametri da DIFFICULTY_LEVELS
+    decrease_manager_ai1 = DecreaseParameters(1)
+    decrease_manager_ai2 = DecreaseParameters(1)
+
     ai1_params = DIFFICULTY_LEVELS[ai1_level]
     ai2_params = DIFFICULTY_LEVELS[ai2_level]
 
@@ -69,6 +132,8 @@ def play_game(ai1_level, ai2_level, verbose=False):
                     print(f"AI1 (Livello {ai1_level}) effettua una mossa casuale nella colonna {col}.")
                 first_move = False
             else:
+                if ai1_level == 1:
+                    ai1_params = decrease_manager_ai1.update_parameters()
                 # Mossa basata sull'AI
                 col = find_best_move(deepcopy(board), ai1_params['max_depth'], ai1_params['beam_width'],
                                      ai1_params['heuristic_weights'], ai1_params['time_limit'],
@@ -105,6 +170,8 @@ def play_game(ai1_level, ai2_level, verbose=False):
                     print(f"AI2 (Livello {ai2_level}) effettua una mossa casuale nella colonna {col}.")
                 first_move = False
             else:
+                if ai2_level == 1:
+                    ai2_params = decrease_manager_ai2.update_parameters()
                 # Mossa basata sull'AI
                 col = find_best_move(deepcopy(board), ai2_params['max_depth'], ai2_params['beam_width'],
                                      ai2_params['heuristic_weights'], ai2_params['time_limit'],
@@ -174,7 +241,7 @@ def main():
 
     for match in range(1, num_matches + 1):
         print(f"--- Partita {match} ---")
-        result, t1, t2, m1, m2, final_board = play_game(ai1_level, ai2_level, verbose=False)
+        result, t1, t2, m1, m2, final_board = play_game(ai1_level, ai2_level, verbose=True)
         if result == "AI1":
             ai1_wins += 1
             total_winning_moves += m1
@@ -223,3 +290,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
