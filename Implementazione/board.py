@@ -1,5 +1,3 @@
-#board.py
-
 import numpy as np
 
 # Costanti di base per la gestione della board
@@ -150,12 +148,13 @@ def score_position(board, piece, weights, center_score_map):
     # Finestre diagonali
     for r in range(ROWS - 3):
         for c in range(COLS - 3):
+            # Diagonale "in giù a destra"
             window = [board[r + i][c + i] for i in range(4)]
             score += evaluate_window(window, piece, weights)
         for c in range(3, COLS):
+            # Diagonale "in giù a sinistra"
             window = [board[r + i][c - i] for i in range(4)]
             score += evaluate_window(window, piece, weights)
 
     return score
-
 

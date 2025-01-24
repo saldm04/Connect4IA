@@ -3,7 +3,7 @@ import sys
 import time
 
 import difficulty_levels
-from algorithms.minimax_ab_all_improvements import find_best_move, minimax_alpha_beta
+from algorithms.minimax_ab_all_improvements import find_best_move
 
 from board import (
     create_board, drop_piece, is_valid_location, get_next_open_row,

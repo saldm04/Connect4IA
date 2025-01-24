@@ -142,6 +142,8 @@ def find_best_move(board, max_depth, beam_width, heuristic_weights, time_limit, 
       - max_depth: profondità massima di esplorazione per l'approfondimento iterativo.
       - beam_width: larghezza della beam search.
       - heuristic_weights: pesi per la funzione di valutazione.
+      - time_limit: limite di tempo per l'approfondimento iterativo
+      - center_score_map: moltiplicatori per le pedine nelle colonne centrali
 
     Restituisce:
       - best_col: indice della colonna che rappresenta la mossa ottimale per l'IA.
