@@ -1,8 +1,9 @@
 import pygame
 import sys
 import time
-from threading import Timer
-from algorithms.minimax_ab_all_improvements import find_best_move
+
+import difficulty_levels
+from algorithms.minimax_ab_all_improvements import find_best_move, minimax_alpha_beta
 
 from board import (
     create_board, drop_piece, is_valid_location, get_next_open_row,
@@ -77,13 +78,14 @@ class GameState:
         if self.turn == AI_TURN and not self.game_over and self.not_over:
             pygame.time.wait(400)
 
+            difficulty_params = difficulty_levels.DIFFICULTY_LEVELS[self.difficulty]
+            max_depth = difficulty_params['max_depth']
+            beam_width = difficulty_params['beam_width']
+            heuristic_weights = difficulty_params['heuristic_weights']
+            time_limit = difficulty_params['time_limit']
+            center_score_map = difficulty_params['center_score_map']
             start_time = time.time()
-            if self.difficulty == 1:
-                col = find_best_move(self.board, 4, 2)
-            elif self.difficulty == 2:
-                col = find_best_move(self.board, 5, 5)
-            elif self.difficulty == 3:
-                col = find_best_move(self.board, 7, 7)
+            col = find_best_move(self.board, max_depth, beam_width, heuristic_weights, time_limit, center_score_map)
             end_time = time.time()
             print(f"Tempo di calcolo IA: {end_time - start_time} secondi")
 

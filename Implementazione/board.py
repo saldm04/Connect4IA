@@ -1,3 +1,5 @@
+#board.py
+
 import numpy as np
 
 # Costanti di base per la gestione della board
@@ -103,68 +105,57 @@ def is_terminal_node(board):
 # Funzioni di valutazione (euristiche)
 # =======================================================================
 
-def evaluate_window(window, piece):
-    """
-    Valuta una finestra (lista di 4 celle) in base a quanti pezzi del giocatore (piece)
-    e dell'avversario contiene.
-
-      - Se la finestra contiene 4 pezzi del giocatore: +10000 (vittoria garantita)
-      - Se la finestra contiene 3 pezzi del giocatore e 1 cella vuota: +100 (opportunità molto buona)
-      - Se la finestra contiene 2 pezzi del giocatore e 2 celle vuote: +10 (opportunità moderata)
-      - Se la finestra contiene 3 pezzi dell'avversario e 1 cella vuota: -80 (bloccare l'avversario)
-      - Se la finestra contiene 2 pezzi dell'avversario e 2 celle vuote: -10 (attenzione alle opportunità avversarie)
-    """
+def evaluate_window(window, piece, weights):
     opponent_piece = PLAYER_PIECE if piece == AI_PIECE else AI_PIECE
-
     score = 0
+
     if window.count(piece) == 4:
-        score += 10000
+        score += weights['win']
     elif window.count(piece) == 3 and window.count(0) == 1:
-        score += 100
+        score += weights['three_in_a_row']
     elif window.count(piece) == 2 and window.count(0) == 2:
-        score += 10
+        score += weights['two_in_a_row']
 
     if window.count(opponent_piece) == 3 and window.count(0) == 1:
-        score -= 80  # Bloccare un’avversario in procinto di vincere
+        score -= weights['block_opponent_win']
     elif window.count(opponent_piece) == 2 and window.count(0) == 2:
-        score -= 10  # Attenzione alle opportunità avversarie
+        score -= weights['block_opponent_three']
+
     return score
 
 
-def score_position(board, piece):
-    score = 0
 
-    center_score_map = [3,4,6,7,6,4,3]
+def score_position(board, piece, weights, center_score_map):
+    score = 0
 
     for c in range(COLS):
         col_array = [int(i) for i in board[:, c]]
         count_in_col = col_array.count(piece)
         score += count_in_col * center_score_map[c]
 
-    # 2. Finestre orizzontali
+    # Finestre orizzontali
     for r in range(ROWS):
         row_array = [int(i) for i in list(board[r, :])]
         for c in range(COLS - 3):
             window = row_array[c:c + 4]
-            score += evaluate_window(window, piece)
+            score += evaluate_window(window, piece, weights)
 
-    # 3. Finestre verticali
+    # Finestre verticali
     for c in range(COLS):
         col_array = [int(i) for i in list(board[:, c])]
         for r in range(ROWS - 3):
             window = col_array[r:r + 4]
-            score += evaluate_window(window, piece)
+            score += evaluate_window(window, piece, weights)
 
-    # 4. Finestre diagonali (positiva e negativa)
+    # Finestre diagonali
     for r in range(ROWS - 3):
         for c in range(COLS - 3):
-            # Diagonale "in giù a destra"
             window = [board[r + i][c + i] for i in range(4)]
-            score += evaluate_window(window, piece)
+            score += evaluate_window(window, piece, weights)
         for c in range(3, COLS):
-            # Diagonale "in giù a sinistra"
             window = [board[r + i][c - i] for i in range(4)]
-            score += evaluate_window(window, piece)
+            score += evaluate_window(window, piece, weights)
 
     return score
+
 

@@ -9,10 +9,7 @@ from board import (
     get_valid_locations,
     get_next_open_row,
     drop_piece,
-    is_terminal_node,
     score_position,
-    ROWS,
-    COLS
 )
 
 
@@ -32,7 +29,7 @@ def clone_board(board):
     return board.copy()
 
 
-def order_moves(board, moves, piece):
+def order_moves(board, moves, piece, heuristic_weights, center_score_map):
     """
     Ordina le mosse in base all'euristica (score_position) per la board ottenuta
     applicando ciascuna mossa. Le mosse sono ordinate in ordine decrescente se
@@ -43,7 +40,7 @@ def order_moves(board, moves, piece):
         new_board = clone_board(board)
         row = get_next_open_row(new_board, col)
         drop_piece(new_board, row, col, piece)
-        score = score_position(new_board, piece)
+        score = score_position(new_board, piece, heuristic_weights, center_score_map)
         scored_moves.append((score, col))
     scored_moves.sort(key=lambda x: x[0], reverse=True)
     # Restituisce solo la lista delle colonne ordinate
@@ -53,7 +50,7 @@ def order_moves(board, moves, piece):
 
 # --- Minimax con potatura alpha-beta, beam search e approfondimento iterativo ---
 
-def minimax_alpha_beta(board, maximizing_player, alpha, beta, depth, max_depth, beam_width):
+def minimax_alpha_beta(board, maximizing_player, alpha, beta, depth, max_depth, beam_width, heuristic_weights, center_score_map):
 
     # Casi terminali
     if winning_move(board, PLAYER_PIECE):
@@ -64,14 +61,14 @@ def minimax_alpha_beta(board, maximizing_player, alpha, beta, depth, max_depth, 
         return 0
 
     if depth == max_depth:
-        return score_position(board, AI_PIECE)
+        return score_position(board, AI_PIECE, heuristic_weights, center_score_map)
 
     valid_moves = get_valid_locations(board)
 
     # Ordinamento dinamico delle mosse
     # Se è il turno dell'IA, ordina in ordine decrescente, altrimenti in ordine crescente.
     current_piece = AI_PIECE if maximizing_player else PLAYER_PIECE
-    ordered_moves = order_moves(board, valid_moves, current_piece)
+    ordered_moves = order_moves(board, valid_moves, current_piece, heuristic_weights, center_score_map)
     # Applica la beam search: considera solo le prime "beam_width" mosse
     ordered_moves = ordered_moves[:beam_width] if beam_width < len(ordered_moves) else ordered_moves
     if maximizing_player:
@@ -80,7 +77,7 @@ def minimax_alpha_beta(board, maximizing_player, alpha, beta, depth, max_depth, 
             new_board = clone_board(board)
             row = get_next_open_row(new_board, col)
             drop_piece(new_board, row, col, AI_PIECE)
-            value = minimax_alpha_beta(new_board, False, alpha, beta, depth + 1, max_depth, beam_width)
+            value = minimax_alpha_beta(new_board, False, alpha, beta, depth + 1, max_depth, beam_width, heuristic_weights, center_score_map)
             best_value = max(best_value, value)
             alpha = max(alpha, best_value)
             if alpha >= beta:
@@ -92,7 +89,7 @@ def minimax_alpha_beta(board, maximizing_player, alpha, beta, depth, max_depth, 
             new_board = clone_board(board)
             row = get_next_open_row(new_board, col)
             drop_piece(new_board, row, col, PLAYER_PIECE)
-            value = minimax_alpha_beta(new_board, True, alpha, beta, depth + 1, max_depth, beam_width)
+            value = minimax_alpha_beta(new_board, True, alpha, beta, depth + 1, max_depth, beam_width, heuristic_weights, center_score_map)
             best_value = min(best_value, value)
             beta = min(beta, best_value)
             if alpha >= beta:
@@ -103,7 +100,7 @@ def minimax_alpha_beta(board, maximizing_player, alpha, beta, depth, max_depth, 
 import time
 
 
-def iterative_deepening_minimax(board, max_depth, beam_width):
+def iterative_deepening_minimax(board, max_depth, beam_width, heuristic_weights, time_limit, center_score_map):
     """
     Approfondimento iterativo con controllo di tempo: esegue la ricerca iterativamente
     da profondità 1 fino a max_depth, fermandosi se supera il limite di tempo di un secondo.
@@ -112,12 +109,11 @@ def iterative_deepening_minimax(board, max_depth, beam_width):
     """
     best_move = None
     start_time = time.time()  # Tempo iniziale
-    time_limit = 1  # Limite di tempo in secondi
 
     for current_depth in range(1, max_depth + 1):
         best_value = float('-inf')
         valid_moves = get_valid_locations(board)
-        ordered_moves = order_moves(board, valid_moves, AI_PIECE)
+        ordered_moves = order_moves(board, valid_moves, AI_PIECE, heuristic_weights, center_score_map)
         ordered_moves = ordered_moves[:beam_width] if beam_width < len(ordered_moves) else ordered_moves
 
         for col in ordered_moves:
@@ -129,14 +125,14 @@ def iterative_deepening_minimax(board, max_depth, beam_width):
             new_board = clone_board(board)
             row = get_next_open_row(new_board, col)
             drop_piece(new_board, row, col, AI_PIECE)
-            move_value = minimax_alpha_beta(new_board, False, float('-inf'), float('inf'), 1, current_depth, beam_width)
+            move_value = minimax_alpha_beta(new_board, False, float('-inf'), float('inf'), 1, current_depth, beam_width, heuristic_weights, center_score_map)
             if move_value > best_value:
                 best_value = move_value
                 best_move = col
 
     return best_move
 
-def find_best_move(board, max_depth, beam_width):
+def find_best_move(board, max_depth, beam_width, heuristic_weights, time_limit, center_score_map):
     """
     Determina la migliore mossa per l'IA (AI_PIECE) in base allo stato corrente della board,
     utilizzando approfondimento iterativo, ordinamento dinamico e potatura in avanti (beam search).
@@ -144,10 +140,11 @@ def find_best_move(board, max_depth, beam_width):
     Parametri:
       - board: lo stato corrente della board.
       - max_depth: profondità massima di esplorazione per l'approfondimento iterativo.
+      - beam_width: larghezza della beam search.
+      - heuristic_weights: pesi per la funzione di valutazione.
 
     Restituisce:
       - best_col: indice della colonna che rappresenta la mossa ottimale per l'IA.
 
     """
-    return iterative_deepening_minimax(board, max_depth, beam_width)
-
+    return iterative_deepening_minimax(board, max_depth, beam_width, heuristic_weights, time_limit, center_score_map)
