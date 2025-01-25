@@ -2,7 +2,6 @@ import pygame
 import sys
 import time
 
-import difficulty_levels
 from algorithms.minimax_ab_all_improvements import find_best_move
 
 from board import (
@@ -14,10 +13,13 @@ from board import (
 from utils import (
     load_image,
     scale_size,
-    scale_position
+    scale_position,
+    DIFFICULTY_LEVELS
 )
 
-
+# ===============================================================================
+# Classe che gestisce lo stato di Gioco
+# ===============================================================================
 class GameState:
 
     def __init__(self, window, player_name="no name", difficulty=2):
@@ -85,7 +87,7 @@ class GameState:
                 self.ai_manager.update_parameters()
                 difficulty_params = self.ai_manager.difficulty_params
             else:
-                difficulty_params = difficulty_levels.DIFFICULTY_LEVELS[self.difficulty]
+                difficulty_params = DIFFICULTY_LEVELS[self.difficulty]
 
             max_depth = difficulty_params['max_depth']
             beam_width = difficulty_params['beam_width']
@@ -97,7 +99,7 @@ class GameState:
             start_time = time.time()
             col = find_best_move(self.board, max_depth, beam_width, heuristic_weights, time_limit, center_score_map)
             end_time = time.time()
-            print(f"Tempo di calcolo IA: {end_time - start_time} secondi")
+            #print(f"Tempo di calcolo IA: {end_time - start_time} secondi")
 
             if col is not None and is_valid_location(self.board, col):
                 row = get_next_open_row(self.board, col)
@@ -131,6 +133,9 @@ class GameState:
         self.test_easy = 0
         pygame.display.update()
 
+# ===============================================================================
+# Classe per disegnare l'interfaccia di gioco
+# ===============================================================================
 class GameGui:
 
     def __init__(self, window, player_name, game_state):
@@ -160,7 +165,7 @@ class GameGui:
 
     def draw_background(self):
         screen_width, screen_height = self.screen.get_size()
-        text_color = (0, 0, 0)  # Colore migliorato
+        text_color = (0, 0, 0)
 
         self.text_font = pygame.font.Font("game_assets/font.ttf", self.get_scaled_font_size())
 
@@ -300,6 +305,9 @@ class GameGui:
             self.draw_overlay(winner)
         pygame.display.update()
 
+# ===============================================================================
+# Classe dedicata al decremento dei parametri per il livello facile
+# ===============================================================================
 class DecreaseParameters:
     def __init__(self, difficulty):
         self.difficulty = difficulty

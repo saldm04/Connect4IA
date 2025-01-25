@@ -2,13 +2,12 @@ import random
 import time
 from copy import deepcopy
 
-# Importa le funzioni necessarie dai tuoi moduli esistenti
 from algorithms.minimax_ab_all_improvements import find_best_move
 from board import (
     create_board, drop_piece, is_valid_location, get_next_open_row,
     winning_move, PLAYER_PIECE, AI_PIECE, ROWS, COLS
 )
-from difficulty_levels import DIFFICULTY_LEVELS
+from utils import DIFFICULTY_LEVELS
 
 class DecreaseParameters:
     def __init__(self, difficulty):
@@ -73,7 +72,6 @@ class DecreaseParameters:
         return self.difficulty_params
 
 def print_board(board):
-    """Stampa la scacchiera nel terminale."""
     print("\nScacchiera Finale:")
     for row in board:
         print('|' + '|'.join([' ' if cell == 0 else ('X' if cell == 1 else 'O') for cell in row]) + '|')
@@ -82,37 +80,20 @@ def print_board(board):
 
 
 def play_game(ai1_level, ai2_level, verbose=False):
-    """
-    Gioca una singola partita tra due AI di diversi livelli.
 
-    Parametri:
-      - ai1_level: Livello di difficoltà per AI1 (1, 2, 3).
-      - ai2_level: Livello di difficoltà per AI2 (1, 2, 3).
-      - verbose: Se True, stampa dettagli della partita.
-
-    Restituisce:
-      - Vincitore della partita ("AI1", "AI2" o "Draw").
-      - Tempo totale di risposta di AI1.
-      - Tempo totale di risposta di AI2.
-      - Numero di mosse effettuate da AI1.
-      - Numero di mosse effettuate da AI2.
-      - Stato finale della scacchiera.
-    """
     board = create_board()
     game_over = False
-    turn = random.choice([1, 2])  # 1 per AI1, 2 per AI2
+    turn = random.choice([1, 2])
     start_player = "AI1" if turn == 1 else "AI2"
 
     if verbose:
         print(f"Inizio della partita. {start_player} inizia.")
 
-    # Variabili per i tempi di risposta e conteggio mosse
     ai1_total_time = 0
     ai2_total_time = 0
     ai1_move_count = 0
     ai2_move_count = 0
 
-    # Flag per determinare se è la prima mossa
     first_move = True
 
     decrease_manager_ai1 = DecreaseParameters(1)
@@ -126,7 +107,6 @@ def play_game(ai1_level, ai2_level, verbose=False):
             # AI1 gioca
             start_time = time.time()
             if first_move:
-                # Mossa di apertura casuale
                 col = random.choice([c for c in range(COLS) if is_valid_location(board, c)])
                 if verbose:
                     print(f"AI1 (Livello {ai1_level}) effettua una mossa casuale nella colonna {col}.")
@@ -134,7 +114,6 @@ def play_game(ai1_level, ai2_level, verbose=False):
             else:
                 if ai1_level == 1:
                     ai1_params = decrease_manager_ai1.update_parameters()
-                # Mossa basata sull'AI
                 col = find_best_move(deepcopy(board), ai1_params['max_depth'], ai1_params['beam_width'],
                                      ai1_params['heuristic_weights'], ai1_params['time_limit'],
                                      ai1_params['center_score_map'])
@@ -164,7 +143,6 @@ def play_game(ai1_level, ai2_level, verbose=False):
             # AI2 gioca
             start_time = time.time()
             if first_move:
-                # Mossa di apertura casuale
                 col = random.choice([c for c in range(COLS) if is_valid_location(board, c)])
                 if verbose:
                     print(f"AI2 (Livello {ai2_level}) effettua una mossa casuale nella colonna {col}.")
@@ -172,7 +150,6 @@ def play_game(ai1_level, ai2_level, verbose=False):
             else:
                 if ai2_level == 1:
                     ai2_params = decrease_manager_ai2.update_parameters()
-                # Mossa basata sull'AI
                 col = find_best_move(deepcopy(board), ai2_params['max_depth'], ai2_params['beam_width'],
                                      ai2_params['heuristic_weights'], ai2_params['time_limit'],
                                      ai2_params['center_score_map'])
@@ -199,7 +176,6 @@ def play_game(ai1_level, ai2_level, verbose=False):
 
                 turn = 1
 
-        # Controlla se la scacchiera è piena
         if not any(is_valid_location(board, c) for c in range(COLS)):
             if verbose:
                 print("Pareggio!")
@@ -210,7 +186,6 @@ def play_game(ai1_level, ai2_level, verbose=False):
 def main():
     print("Modulo di Test per Sfidare Due AI di Forza 4")
 
-    # Input dell'utente
     while True:
         try:
             ai1_level = int(input("Inserisci il livello della AI1 (1, 2, 3): "))
@@ -226,7 +201,6 @@ def main():
         except ValueError:
             print("Per favore, inserisci valori numerici validi (livelli: 1, 2, 3; partite: >0).")
 
-    # Variabili per le statistiche
     ai1_wins = 0
     ai2_wins = 0
     draws = 0
@@ -263,16 +237,13 @@ def main():
         ai1_total_moves += m1
         ai2_total_moves += m2
 
-    # Calcolo dei tempi medi per mossa
     avg_ai1_time = ai1_total_time / ai1_total_moves if ai1_total_moves > 0 else 0
     avg_ai2_time = ai2_total_time / ai2_total_moves if ai2_total_moves > 0 else 0
 
-    # Calcolo delle mosse medie per vincere
     total_wins = ai1_wins + ai2_wins
     avg_winning_moves = total_winning_moves / total_wins if total_wins > 0 else 0
     avg_losing_moves = total_losing_moves / total_wins if total_wins > 0 else 0
 
-    # Output dei risultati
     print("Test Completato!\n")
     print(f"Numero di Partite: {num_matches}")
     print(f"Vittorie AI1 (Livello {ai1_level}): {ai1_wins}")
