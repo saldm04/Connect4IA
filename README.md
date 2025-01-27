@@ -28,6 +28,10 @@ Segui questi passaggi per configurare l'ambiente di sviluppo ed eseguire l'appli
    ```bash
    python3 -m venv .venv
    ```
+   oppure
+    ```bash
+   python -m venv .venv
+   ```
 
 3. Installa le dipendenze con Pipenv:
    ```bash
@@ -49,6 +53,16 @@ Segui questi passaggi per configurare l'ambiente di sviluppo ed eseguire l'appli
       python main.py
       ```
 
+6. Avvia il test per simulare la partita tra due agenti intelligenti (opzionale):
+    - Entra nella cartella `Implementazione`:
+      ```bash
+      cd Implementazione
+      ```
+    - Esegui il test:
+      ```bash
+      python difficulty_test.py
+      ```
+
 ### Utilizzo con IDE
 Se utilizzi un IDE come IntelliJ o PyCharm:
 1. Configura l'interprete Python basato sull'ambiente virtuale `.venv` creato nella directory del progetto.
@@ -66,6 +80,6 @@ Se utilizzi un IDE come IntelliJ o PyCharm:
     - **`main`**: Modulo principale responsabile dell'avvio del gioco.
     - **`game_assets`**: Directory contenente gli elementi grafici utilizzati per costruire l'interfaccia utente.
     - **`utils`**: Modulo che fornisce funzioni ausiliarie per la gestione dell'interfaccia grafica e per la selezione del livello di difficoltà.
-    - **`tests`**: Directory che contiene il modulo per il test.
+    - **`difficulty_test`**: Modulo per il test.
 
 - **Documentazione**: Contiene il report del progetto, con una descrizione dettagliata delle funzionalità, dell'architettura e delle scelte progettuali.

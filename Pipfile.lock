@@ -81,25 +81,6 @@
             "markers": "python_version >= '3.10'",
             "version": "==2.2.2"
         },
-        "psutil-wheels": {
-            "hashes": [
-                "sha256:05a4b136c395273066ecd63d64200868fc57561c65f6dda988b28d08f4a60f69",
-                "sha256:2cfbb317f3ee0c8ac9dd5d82e6913b0216222d2b22ea65cbc2f8072dabb167d4",
-                "sha256:3f0ca7c4c9031e04b18e52cd4c6f17e196bb7896071dd1eacaeb352948b47517",
-                "sha256:5dd57fb06b081bf2e3cebe89ca92f6ef606ecc5e50ac7ecb2dc7a68262d6cd91",
-                "sha256:84bb63b669aa918b4a62226276b1c1f952e57a461debfb7b9eed848c41e7cbda",
-                "sha256:902ab2a221529cd7c0d9fa2f865fdd22bc45df87db825437aeee0dcaeed9b787",
-                "sha256:933c4079c8121f8f0d3d1525671e3b6182d804d54c7819b6a7dddeac5605ba69",
-                "sha256:96838ad949609621e369d327834ade3b3e1b0fa3f450e0a7460855a3cf41a6d6",
-                "sha256:9fb80725195402a66e5db947f239d032500cde75ca5d8625326d797a65341d6f",
-                "sha256:b07890d22db82a135b8d5149ba1736e0fde998605cfa73c4d030bbfc77e890b6",
-                "sha256:c7c13e8264fa26f0bde4ddc15f2959d04c2a8f7537c41541d1503dd159b01a86",
-                "sha256:d13d705fb5026d3ae476c7988601430dfaa6143e695058a3182146adc0457b7f",
-                "sha256:ea1f7f6bcc536669a22c07429dde993bc707f45339137b085394faada25fc813"
-            ],
-            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
-            "version": "==5.8.0"
-        },
         "pygame": {
             "hashes": [
                 "sha256:00827aba089355925902d533f9c41e79a799641f03746c50a374dc5c3362e43d",
